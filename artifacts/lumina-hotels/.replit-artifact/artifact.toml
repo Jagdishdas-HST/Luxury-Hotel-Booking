@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Lumina Hotels"
+description = "A refined booking website for a boutique hotel group, designed for luxury travelers seeking restorative stays, considered service, and distinctive destinations."
+version = "1.0.0"
+id = "artifacts/lumina-hotels"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25166
+
+[services.development]
+run = "pnpm --filter @workspace/lumina-hotels run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/lumina-hotels", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/lumina-hotels/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25166"
+BASE_PATH = "/"
