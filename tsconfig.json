@@ -1,6 +1,17 @@
 {
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
+  "include": [
+    "backend/**/*",
+    "frontend/**/*",
+    "shared/**/*"
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@shared/*": ["./shared/*"],
+      "@/*": ["./frontend/src/*"]
+    }
+  },
   "files": [],
   "references": [
     {
