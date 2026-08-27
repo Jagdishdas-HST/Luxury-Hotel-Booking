@@ -6,7 +6,8 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
-import { Route, Switch, useLocation, Router as WouterRouter, memoryLocation } from 'wouter';
+import { Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
+import { memoryLocation } from 'wouter/memory-location';
 
 const queryClient = new QueryClient();
 
