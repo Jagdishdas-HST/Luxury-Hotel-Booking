@@ -1,10 +1,9 @@
 import { renderToString } from "react-dom/server";
-import { StaticRouter } from "react-router-dom/server";
 import App from "./App";
 import { Providers } from "@/components/Providers";
 import { SiteUrlContext } from "@/lib/site-url";
 
-// SSR entry. Mirrors main.tsx exactly except for the router (StaticRouter vs BrowserRouter).
+// SSR entry. Uses wouter's memoryLocation to match the client-side WouterRouter in App.tsx.
 // Providers is shared, so any provider added there is present here automatically — never add
 // providers to this file.
 export function render(url: string, origin = "") {
@@ -13,9 +12,7 @@ export function render(url: string, origin = "") {
   renderToString(
     <Providers helmetContext={helmetContext}>
       <SiteUrlContext.Provider value={origin}>
-        <StaticRouter location={url}>
-          <App />
-        </StaticRouter>
+        <App ssrUrl={url} />
       </SiteUrlContext.Provider>
     </Providers>,
   );

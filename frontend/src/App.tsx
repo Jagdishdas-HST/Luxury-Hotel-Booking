@@ -6,7 +6,7 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
-import { Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
+import { Route, Switch, useLocation, Router as WouterRouter, memoryLocation } from 'wouter';
 
 const queryClient = new QueryClient();
 
@@ -334,11 +334,34 @@ function RoutedErrorBoundary({ children }: { children: ReactNode }) {
   return <ErrorBoundary resetKey={location}>{children}</ErrorBoundary>;
 }
 
-function App() {
+interface AppProps {
+  ssrUrl?: string;
+}
+
+function App({ ssrUrl }: AppProps) {
+  // During SSR, use memoryLocation so wouter doesn't touch window.location
+  if (ssrUrl !== undefined) {
+    const { hook } = memoryLocation({ path: ssrUrl, static: true });
+    return (
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <WouterRouter hook={hook}>
+            <Router />
+          </WouterRouter>
+          <Toaster />
+        </TooltipProvider>
+      </QueryClientProvider>
+    );
+  }
+
+  const base = typeof import.meta !== 'undefined' && import.meta.env
+    ? import.meta.env.BASE_URL?.replace(/\/$/, '') ?? ''
+    : '';
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+        <WouterRouter base={base}>
           <Router />
         </WouterRouter>
         <Toaster />
