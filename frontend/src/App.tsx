@@ -62,19 +62,19 @@ const destinations: Destination[] = [
 
 const rituals = [
   { time: '06:40', title: 'First light', body: 'A thermos of something warm waits outside your door. No knock, no hurry.', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1000&q=85' },
-  { time: '13:15', title: 'The long table', body: 'Lunch follows the market. Sit where the shade finds you; we will take care of the rest.', image: 'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1000&q=85' },
-  { time: '20:30', title: 'After dark', body: 'A lantern, a local pour, and a sky with no reason to be elsewhere.', image: 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1000&q=85' },
+  { time: '13:15', title: 'The long table', body: 'Lunch follows the market. Sit where the shade finds you; we will take care of the rest.', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1000&q=85' },
+  { time: '20:00', title: 'The quiet hour', body: 'Dinner is unhurried. The wine is local. The conversation is yours.', image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=85' },
 ];
 
-function Image({ src, alt, className = '' }: { src: string; alt: string; className?: string }) {
-  return <img src={src} alt={alt} loading="lazy" className={`h-full w-full object-cover ${className}`} />;
+function Image({ src, alt, className }: { src: string; alt: string; className?: string }) {
+  return <img src={src} alt={alt} className={`absolute inset-0 h-full w-full object-cover ${className ?? ''}`} />;
 }
 
 function Logo({ light = false }: { light?: boolean }) {
   return (
-    <a href="#top" className={`group flex items-center gap-3 ${light ? 'text-[#f8f2e8]' : 'text-[#143e35]'}`} data-testid="link-logo">
-      <span className={`flex h-8 w-8 items-center justify-center border ${light ? 'border-[#e8b092]' : 'border-[#d98463]'}`}>
-        <span className="serif text-xl leading-none">L</span>
+    <a href="#top" className="flex items-center gap-3">
+      <span className={`flex h-8 w-8 items-center justify-center rounded-full border ${light ? 'border-[#e8b092]/70 text-[#e8b092]' : 'border-[#d47d5b] text-[#d47d5b]'}`}>
+        <span className="block h-2 w-2 rounded-full bg-current" />
       </span>
       <span className="leading-none">
         <span className="block text-[15px] font-semibold tracking-[.22em]">LUMINA</span>
@@ -221,27 +221,33 @@ function Home() {
           <div className="relative z-10 mx-auto w-full max-w-[1440px] px-5 pb-36 sm:px-10 sm:pb-40">
             <div className="max-w-4xl">
               <div className="eyebrow mb-6 flex items-center gap-3 text-[#e8b092]"><span className="h-px w-10 bg-[#e8b092]" /> The rare way to travel</div>
-              <h1 className="serif max-w-4xl text-[clamp(4.8rem,12vw,11.4rem)] leading-[.76] tracking-[-.04em]">Stay<br /><em>elsewhere.</em></h1>
-              <div className="mt-8 flex max-w-xl flex-col gap-6 sm:ml-[20%] sm:flex-row sm:items-start">
-                <p className="max-w-xs text-sm leading-6 text-[#e6dfd4]">Four private hotels in places that still have secrets. Come for the view. Stay for the unhurried hours.</p>
-                <a href="#philosophy" data-testid="link-hero-discover" className="group inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8]"><span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#f8f2e8]/60 transition-transform group-hover:translate-y-1"><ArrowDownRight size={15} strokeWidth={1.4} /></span> Discover Lumina</a>
+              <h1 className="serif text-[clamp(4rem,9vw,9.5rem)] leading-[.82] tracking-[-.03em]">Somewhere<br /><em>worth</em><br />arriving.</h1>
+              <p className="mt-9 max-w-sm text-[15px] leading-7 text-[#d6cfc3]">A small collection of private hotels for people who travel to feel something. Not to fill the unhurried hours.</p>
+              <div className="mt-10 flex flex-wrap gap-5">
+                <button onClick={() => setBookingOpen(true)} data-testid="button-hero-reserve" className="inline-flex items-center gap-4 bg-[#d47d5b] px-7 py-4 text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8] transition-colors hover:bg-[#e8b092] hover:text-[#143e35]">Reserve a stay <ArrowRight size={15} /></button>
+                <a href="#destinations" className="inline-flex items-center gap-4 border border-[#f8f2e8]/40 px-7 py-4 text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8] transition-colors hover:border-[#f8f2e8]">Explore places <ChevronDown size={15} /></a>
               </div>
             </div>
-            <div className="absolute bottom-10 right-5 hidden items-center gap-3 sm:right-10 sm:flex"><span className="eyebrow text-[#d6c6b3]">Scroll to wander</span><span className="h-10 w-px bg-[#e8b092]" /></div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 z-10 translate-y-1/2 px-5 sm:px-10">
+          <div className="absolute bottom-8 right-8 hidden flex-col items-end gap-2 sm:flex">
+            <span className="eyebrow text-[#d6cfc3]/60">Scroll</span>
+            <span className="h-12 w-px bg-[#d6cfc3]/30" />
+          </div>
+        </section>
+
+        <section className="bg-[#f5efe5] px-5 py-24 sm:px-10 sm:py-36">
+          <div className="mx-auto max-w-[1440px]">
             <div className="mx-auto grid max-w-[1120px] grid-cols-2 border border-[#d9cdbd] bg-[#f8f2e8] text-[#143e35] shadow-[0_18px_50px_rgba(20,62,53,.12)] sm:grid-cols-4">
               <button onClick={() => setBookingOpen(true)} data-testid="button-quick-destination" className="group border-b border-r border-[#d9cdbd] px-5 py-5 text-left transition-colors hover:bg-[#eee4d7] sm:border-b-0"><span className="eyebrow block text-[#527069]">Destination</span><span className="mt-2 flex items-center justify-between text-[14px]">Choose a place <ChevronDown size={15} /></span></button>
               <button onClick={() => setBookingOpen(true)} data-testid="button-quick-dates" className="group border-b border-[#d9cdbd] px-5 py-5 text-left transition-colors hover:bg-[#eee4d7] sm:border-b-0 sm:border-r"><span className="eyebrow block text-[#527069]">Dates</span><span className="mt-2 flex items-center justify-between text-[14px]">When to wander <CalendarDays size={15} /></span></button>
-              <button onClick={() => setBookingOpen(true)} data-testid="button-quick-guests" className="border-r border-[#d9cdbd] px-5 py-5 text-left transition-colors hover:bg-[#eee4d7]"><span className="eyebrow block text-[#527069]">Guests</span><span className="mt-2 flex items-center justify-between text-[14px]">2 guests <ChevronDown size={15} /></span></button>
-              <button onClick={() => setBookingOpen(true)} data-testid="button-quick-reserve" className="bg-[#d47d5b] px-5 py-5 text-left text-[#f8f2e8] transition-colors hover:bg-[#143e35]"><span className="eyebrow block text-[#f7ded0]">Availability</span><span className="mt-2 flex items-center justify-between text-[14px]">Find your room <ArrowRight size={15} /></span></button>
+              <button onClick={() => setBookingOpen(true)} data-testid="button-quick-guests" className="group border-r border-[#d9cdbd] px-5 py-5 text-left transition-colors hover:bg-[#eee4d7]"><span className="eyebrow block text-[#527069]">Guests</span><span className="mt-2 flex items-center justify-between text-[14px]">How many <Plus size={15} /></span></button>
+              <button onClick={() => setBookingOpen(true)} data-testid="button-quick-search" className="group bg-[#143e35] px-5 py-5 text-left text-[#f8f2e8] transition-colors hover:bg-[#d47d5b]"><span className="eyebrow block text-[#d6cfc3]">Search</span><span className="mt-2 flex items-center justify-between text-[14px]">Find your stay <ArrowRight size={15} /></span></button>
             </div>
           </div>
         </section>
 
-        <section id="philosophy" className="bg-[#f5efe5] px-5 pb-28 pt-44 sm:px-10 sm:pb-40 sm:pt-56">
-          <div ref={introRef} className="reveal mx-auto grid max-w-[1200px] gap-12 lg:grid-cols-[.8fr_1.6fr] lg:gap-28">
-            <SectionLabel number="01">A different measure of time</SectionLabel>
+        <section id="philosophy" className="bg-[#f5efe5] px-5 pb-24 sm:px-10 sm:pb-36">
+          <div ref={introRef} className="reveal mx-auto max-w-[1200px]">
             <div>
               <h2 className="serif max-w-4xl text-[clamp(3.4rem,7vw,7.4rem)] leading-[.88] tracking-[-.025em]">The luxury is not <em>more.</em><br />It is <em>enough.</em></h2>
               <div className="mt-12 grid max-w-2xl gap-8 text-[15px] leading-7 text-[#527069] sm:grid-cols-2">
@@ -293,7 +299,7 @@ function Home() {
           <div ref={notesRef} className="reveal mx-auto max-w-[1200px]">
             <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end"><div><SectionLabel number="05">The house notes</SectionLabel><h2 className="serif mt-7 text-6xl leading-[.88] sm:text-8xl">From our<br /><em>notebook.</em></h2></div><ButtonArrow onClick={() => showToast('The next note is still being written.')} testId="button-read-journal">Read all notes</ButtonArrow></div>
             <div className="mt-14 grid gap-8 md:grid-cols-[1.2fr_.8fr]">
-              <article className="group cursor-pointer" onClick={() => showToast('Opening: A field guide to doing less.') } data-testid="card-journal-featured"><div className="aspect-[16/9] overflow-hidden"><Image src="https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1600&q=85" alt="Wild deer in a quiet field" className="transition-transform duration-700 group-hover:scale-105" /></div><div className="mt-5 flex justify-between gap-4"><div><span className="eyebrow text-[#d47d5b]">Field notes · 06 min</span><h3 className="serif mt-3 text-4xl leading-none sm:text-5xl">A field guide to doing less.</h3></div><ArrowUpRightIcon /></div></article>
+              <article className="group cursor-pointer" onClick={() => showToast('Opening: A field guide to doing less.')} data-testid="card-journal-featured"><div className="aspect-[16/9] overflow-hidden"><Image src="https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1600&q=85" alt="Wild deer in a quiet field" className="transition-transform duration-700 group-hover:scale-105" /></div><div className="mt-5 flex justify-between gap-4"><div><span className="eyebrow text-[#d47d5b]">Field notes · 06 min</span><h3 className="serif mt-3 text-4xl leading-none sm:text-5xl">A field guide to doing less.</h3></div><ArrowUpRightIcon /></div></article>
               <div className="grid gap-8 md:pt-24"><article className="group cursor-pointer border-t border-[#c9ad9d] pt-5" onClick={() => showToast('Opening: The road beyond Ostuni.')} data-testid="card-journal-secondary"><div className="flex gap-5"><div className="h-24 w-24 shrink-0 overflow-hidden"><Image src="https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?auto=format&fit=crop&w=500&q=80" alt="Puglian coast" className="transition-transform duration-500 group-hover:scale-110" /></div><div><span className="eyebrow text-[#d47d5b]">Puglia · 04 min</span><h3 className="serif mt-2 text-3xl leading-none">The road beyond Ostuni.</h3></div></div></article><article className="group cursor-pointer border-t border-[#c9ad9d] pt-5" onClick={() => showToast('Opening: Notes on an early train.')} data-testid="card-journal-tertiary"><div className="flex gap-5"><div className="h-24 w-24 shrink-0 overflow-hidden"><Image src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=500&q=80" alt="Quiet train in Japan" className="transition-transform duration-500 group-hover:scale-110" /></div><div><span className="eyebrow text-[#d47d5b]">Kyoto · 03 min</span><h3 className="serif mt-2 text-3xl leading-none">Notes on an early train.</h3></div></div></article></div>
             </div>
           </div>
@@ -340,7 +346,6 @@ interface AppProps {
 }
 
 function App({ ssrUrl }: AppProps) {
-  // During SSR, use memoryLocation so wouter doesn't touch window.location
   if (ssrUrl !== undefined) {
     const { hook } = memoryLocation({ path: ssrUrl, static: true });
     return (
