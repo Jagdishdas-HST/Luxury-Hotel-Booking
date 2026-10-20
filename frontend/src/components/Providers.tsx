@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,16 +17,15 @@ interface ProvidersProps {
   helmetContext?: Record<string, any>;
 }
 
-// HelmetProvider, QueryClientProvider, TooltipProvider and the toasters all call
-// useSyncExternalStore without a getServerSnapshot, which crashes SSR renderToString.
-// During SSR (helmetContext is provided), we wrap with HelmetProvider only — no other
-// providers are needed for head-tag collection. On the client, we mount everything after
-// hydration via the mounted guard so the server HTML is never touched by these providers.
-function ClientShell({ children, helmetContext }: { children: ReactNode; helmetContext?: Record<string, any> }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
-  // SSR path: only HelmetProvider (with context) wraps children — no store-backed providers.
+// During SSR (helmetContext is provided), we render ONLY HelmetProvider with the context
+// object — no other providers, no hooks, no useState. This avoids the
+// "Missing getServerSnapshot" error from store-backed providers (QueryClient, TooltipProvider,
+// Radix primitives) that call useSyncExternalStore without a server snapshot.
+//
+// On the client (helmetContext is undefined), all providers are rendered normally.
+// The client entry (main.tsx) never passes helmetContext, so this branch is client-only.
+export function Providers({ children, helmetContext }: ProvidersProps) {
+  // SSR path: only HelmetProvider with context — nothing else touches the DOM or stores.
   if (helmetContext !== undefined) {
     return (
       <HelmetProvider context={helmetContext}>
@@ -35,8 +34,7 @@ function ClientShell({ children, helmetContext }: { children: ReactNode; helmetC
     );
   }
 
-  // Client path: defer all store-backed providers until after hydration.
-  if (!mounted) return <>{children}</>;
+  // Client path: full provider tree.
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
@@ -47,14 +45,6 @@ function ClientShell({ children, helmetContext }: { children: ReactNode; helmetC
         </TooltipProvider>
       </QueryClientProvider>
     </HelmetProvider>
-  );
-}
-
-export function Providers({ children, helmetContext }: ProvidersProps) {
-  return (
-    <ClientShell helmetContext={helmetContext}>
-      {children}
-    </ClientShell>
   );
 }
 
