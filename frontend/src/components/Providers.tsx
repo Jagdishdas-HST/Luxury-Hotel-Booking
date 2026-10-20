@@ -17,29 +17,44 @@ interface ProvidersProps {
   helmetContext?: Record<string, any>;
 }
 
-// QueryClientProvider, TooltipProvider and the toasters all call useSyncExternalStore
-// without a getServerSnapshot, which crashes SSR renderToString. This wrapper defers
-// all of them to the client — children are always rendered so SSR still produces markup.
-function ClientShell({ children }: { children: ReactNode }) {
+// HelmetProvider, QueryClientProvider, TooltipProvider and the toasters all call
+// useSyncExternalStore without a getServerSnapshot, which crashes SSR renderToString.
+// During SSR (helmetContext is provided), we wrap with HelmetProvider only — no other
+// providers are needed for head-tag collection. On the client, we mount everything after
+// hydration via the mounted guard so the server HTML is never touched by these providers.
+function ClientShell({ children, helmetContext }: { children: ReactNode; helmetContext?: Record<string, any> }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // SSR path: only HelmetProvider (with context) wraps children — no store-backed providers.
+  if (helmetContext !== undefined) {
+    return (
+      <HelmetProvider context={helmetContext}>
+        {children}
+      </HelmetProvider>
+    );
+  }
+
+  // Client path: defer all store-backed providers until after hydration.
   if (!mounted) return <>{children}</>;
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        {children}
-        <Toaster />
-        <Sonner />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          {children}
+          <Toaster />
+          <Sonner />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 }
 
 export function Providers({ children, helmetContext }: ProvidersProps) {
   return (
-    <HelmetProvider {...(helmetContext ? { context: helmetContext } : {})}>
-      <ClientShell>{children}</ClientShell>
-    </HelmetProvider>
+    <ClientShell helmetContext={helmetContext}>
+      {children}
+    </ClientShell>
   );
 }
 
