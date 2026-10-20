@@ -2,8 +2,9 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
   ArrowDownRight, ArrowRight, CalendarDays, Check,
   ChevronDown, ChevronLeft, ChevronRight, Clock3,
-  Globe2, Menu, Minus, Plus, X,
+  Menu, Minus, Plus, X,
 } from 'lucide-react';
+import SiteFooter from '@/components/SiteFooter';
 import { type ReactNode } from 'react';
 
 /* ── image URLs ─────────────────────────────────────────────────────────── */
@@ -259,7 +260,7 @@ export default function Home() {
               <div className="eyebrow mb-6 flex items-center gap-3 text-[#e8b092]">
                 <span className="h-px w-10 bg-[#e8b092]" /> The rare way to travel
               </div>
-              <h1 className="serif leading-[.82] tracking-[-.03em]" style={{ fontSize: '70px' }}>Somewhere<br /><em style={{ fontSize: '22px' }}>worth</em><br />arriving.</h1>
+              <h1 className="serif leading-[.82] tracking-[-.03em]" style={{ fontSize: '70px' }}>Somewhere<br /><em style={{ fontSize: '22px', color: '#e8b092' }}>worth</em><br />arriving.</h1>
               <p className="mt-9 max-w-sm text-[15px] leading-7 text-[#d6cfc3]">A small collection of private hotels for people who travel to feel something. Not to fill the unhurried hours.</p>
               <div className="mt-10 flex flex-wrap gap-5">
                 <button onClick={() => setBookingOpen(true)} data-testid="button-hero-reserve" className="inline-flex items-center gap-4 bg-[#d47d5b] px-4 py-2 text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8] transition-colors hover:bg-[#e8b092] hover:text-[#143e35]">Reserve a stay <ArrowRight size={15} /></button>
@@ -489,48 +490,7 @@ export default function Home() {
 
       </main>
 
-      {/* ── footer ── */}
-      <footer className="bg-[#143e35] px-5 pb-8 pt-16 text-[#f8f2e8] sm:px-10 sm:pt-20">
-        <div className="mx-auto max-w-[1440px]">
-          <div className="grid gap-12 border-b border-[#f8f2e8]/20 pb-16 md:grid-cols-[1.6fr_1fr_1fr_1fr]">
-            <div>
-              <Logo light />
-              <p className="mt-8 max-w-xs text-sm leading-6 text-[#d6cfc3]">Private hotels for people who would rather be somewhere else.</p>
-            </div>
-            <div>
-              <span className="eyebrow text-[#e8b092]">Explore</span>
-              <div className="mt-5 grid gap-3 text-sm text-[#d6cfc3]">
-                <a href="#destinations" data-testid="link-footer-places" className="w-fit transition-colors hover:text-[#e8b092]">Our places</a>
-                <a href="#philosophy" data-testid="link-footer-way" className="w-fit transition-colors hover:text-[#e8b092]">The Lumina way</a>
-                <a href="#journal" data-testid="link-footer-journal" className="w-fit transition-colors hover:text-[#e8b092]">Journal</a>
-              </div>
-            </div>
-            <div>
-              <span className="eyebrow text-[#e8b092]">Say hello</span>
-              <div className="mt-5 grid gap-3 text-sm text-[#d6cfc3]">
-                <button onClick={() => showToast('A host will be with you shortly.')} data-testid="button-footer-contact" className="w-fit text-left transition-colors hover:text-[#e8b092]">Write to a host</button>
-                <button onClick={() => showToast('Call us at +39 0831 781 204.')} data-testid="button-footer-call" className="w-fit text-left transition-colors hover:text-[#e8b092]">+39 0831 781 204</button>
-                <span>hello@luminahotels.com</span>
-              </div>
-            </div>
-            <div>
-              <span className="eyebrow text-[#e8b092]">Follow along</span>
-              <div className="mt-5 grid gap-3 text-sm text-[#d6cfc3]">
-                <button onClick={() => showToast('Instagram opens in a new window.')} data-testid="button-footer-instagram" className="w-fit text-left transition-colors hover:text-[#e8b092]">Instagram</button>
-                <button onClick={() => showToast('Our newsletter is on its way.')} data-testid="button-footer-newsletter" className="w-fit text-left transition-colors hover:text-[#e8b092]">The Lumina letter</button>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col justify-between gap-4 pt-7 text-[10px] uppercase tracking-[.14em] text-[#a7b1a8] sm:flex-row">
-            <span>© 2024 Lumina Hotels</span>
-            <div className="flex gap-6">
-              <button onClick={() => showToast('Privacy, with care.')} data-testid="button-footer-privacy">Privacy</button>
-              <button onClick={() => showToast('Terms, plainly written.')} data-testid="button-footer-terms">Terms</button>
-              <span className="inline-flex items-center gap-2"><Globe2 size={12} /> EN / EUR</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
 
       {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} toast={showToast} />}
       {toastMsg && (

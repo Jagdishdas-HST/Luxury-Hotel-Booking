@@ -5,12 +5,14 @@ import { Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
 import { memoryLocation } from 'wouter/memory-location';
 import { ClientOnly } from '@/components/ClientOnly';
 import HomeContent from '@/pages/Home';
+import AboutContent from '@/pages/About';
 
 function Router() {
   return (
     <RoutedErrorBoundary>
       <Switch>
         <Route path="/" component={HomePage} />
+        <Route path="/about" component={AboutPage} />
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>
@@ -21,6 +23,14 @@ function HomePage() {
   return (
     <ClientOnly fallback={<div className="min-h-screen bg-[#143e35]" />}>
       <HomeContent />
+    </ClientOnly>
+  );
+}
+
+function AboutPage() {
+  return (
+    <ClientOnly fallback={<div className="min-h-screen bg-[#f5efe5]" />}>
+      <AboutContent />
     </ClientOnly>
   );
 }
