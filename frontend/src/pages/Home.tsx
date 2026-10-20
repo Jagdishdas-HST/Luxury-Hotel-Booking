@@ -301,7 +301,7 @@ export default function Home() {
         {/* ── philosophy ── */}
         <section id="philosophy" className="bg-[#f5efe5] px-5 pb-24 sm:px-10 sm:pb-36">
           <div ref={introRef} className="reveal mx-auto max-w-[1200px]">
-            <h2 className="serif max-w-4xl text-[clamp(3.4rem,7vw,7.4rem)] leading-[.88] tracking-[-.025em]" style={{ color: '#ff0000', fontSize: '60px' }}>The luxury is not <em>more.</em><br />It is <em>enough.</em></h2>
+            <h2 className="serif max-w-4xl text-[clamp(3.4rem,7vw,7.4rem)] leading-[.88] tracking-[-.025em]" style={{ color: '#ff0000', fontSize: '22px' }}>The luxury is not <em>more.</em><br />It is <em>enough.</em></h2>
             <div className="mt-12 grid max-w-2xl gap-8 text-[15px] leading-7 text-[#527069] sm:grid-cols-2">
               <p>Lumina began with a simple suspicion: that the best journeys leave room around them. Room for the afternoon to change its mind. For a second cup. For a road with no name.</p>
               <p>Our houses are small by design, deeply rooted in their places, and run by people who notice things. A cooler on the beach. The good table in town. When not to speak.</p>
