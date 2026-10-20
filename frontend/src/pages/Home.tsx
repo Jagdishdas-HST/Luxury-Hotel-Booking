@@ -260,7 +260,7 @@ export default function Home() {
               <div className="eyebrow mb-6 flex items-center gap-3 text-[#e8b092]">
                 <span className="h-px w-10 bg-[#e8b092]" /> The rare way to travel
               </div>
-              <h1 className="serif leading-[.82] tracking-[-.03em]" style={{ fontSize: '70px' }}>Somewhere<br /><em style={{ fontSize: '22px', color: '#e8b092' }}>worth</em><br />arriving.</h1>
+              <h1 className="serif leading-[.82] tracking-[-.03em]" style={{ fontSize: '70px' }}>Somewhere<br /><em style={{ fontSize: '28px', color: '#f5c4a1', textShadow: '0 1px 8px rgba(0,0,0,0.45)' }}>worth</em><br />arriving.</h1>
               <p className="mt-9 max-w-sm text-[15px] leading-7 text-[#d6cfc3]">A small collection of private hotels for people who travel to feel something. Not to fill the unhurried hours.</p>
               <div className="mt-10 flex flex-wrap gap-5">
                 <button onClick={() => setBookingOpen(true)} data-testid="button-hero-reserve" className="inline-flex items-center gap-4 bg-[#d47d5b] px-4 py-2 text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8] transition-colors hover:bg-[#e8b092] hover:text-[#143e35]">Reserve a stay <ArrowRight size={15} /></button>
