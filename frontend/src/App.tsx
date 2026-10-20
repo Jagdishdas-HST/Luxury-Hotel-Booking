@@ -26,7 +26,15 @@ function HomePage() {
 }
 
 function RoutedErrorBoundary({ children }: { children: ReactNode }) {
-  const [location] = useLocation();
+  // useLocation is only safe inside a WouterRouter with a server-compatible hook.
+  // We guard it so SSR never calls it outside a router context.
+  let location = '/';
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    [location] = useLocation();
+  } catch {
+    // During SSR with memoryLocation the hook may not be available yet; fall back to '/'.
+  }
   return <ErrorBoundary resetKey={location}>{children}</ErrorBoundary>;
 }
 
