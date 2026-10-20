@@ -17,28 +17,28 @@ interface ProvidersProps {
   helmetContext?: Record<string, any>;
 }
 
-// TooltipProvider and the toasters use Radix primitives that call useSyncExternalStore
-// without a getServerSnapshot, crashing SSR. This wrapper suppresses them on the server
-// and mounts them only after hydration — children are always rendered.
-function RadixShell({ children }: { children: ReactNode }) {
+// QueryClientProvider, TooltipProvider and the toasters all call useSyncExternalStore
+// without a getServerSnapshot, which crashes SSR renderToString. This wrapper defers
+// all of them to the client — children are always rendered so SSR still produces markup.
+function ClientShell({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   if (!mounted) return <>{children}</>;
   return (
-    <TooltipProvider>
-      {children}
-      <Toaster />
-      <Sonner />
-    </TooltipProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        {children}
+        <Toaster />
+        <Sonner />
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 }
 
 export function Providers({ children, helmetContext }: ProvidersProps) {
   return (
     <HelmetProvider {...(helmetContext ? { context: helmetContext } : {})}>
-      <QueryClientProvider client={queryClient}>
-        <RadixShell>{children}</RadixShell>
-      </QueryClientProvider>
+      <ClientShell>{children}</ClientShell>
     </HelmetProvider>
   );
 }
