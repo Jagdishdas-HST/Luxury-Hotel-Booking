@@ -24,7 +24,7 @@ export function Providers({ children, helmetContext }: ProvidersProps) {
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           {children}
-          <Toaster />
+          <ClientOnly><Toaster /></ClientOnly>
           <ClientOnly><Sonner /></ClientOnly>
         </TooltipProvider>
       </QueryClientProvider>
