@@ -262,7 +262,7 @@ export default function Home() {
               <h1 className="serif text-[clamp(4rem,9vw,9.5rem)] leading-[.82] tracking-[-.03em]">Somewhere<br /><em>worth</em><br />arriving.</h1>
               <p className="mt-9 max-w-sm text-[15px] leading-7 text-[#d6cfc3]">A small collection of private hotels for people who travel to feel something. Not to fill the unhurried hours.</p>
               <div className="mt-10 flex flex-wrap gap-5">
-                <button onClick={() => setBookingOpen(true)} data-testid="button-hero-reserve" className="inline-flex items-center gap-4 bg-[#d47d5b] px-7 py-4 text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8] transition-colors hover:bg-[#e8b092] hover:text-[#143e35]">Reserve a stay <ArrowRight size={15} /></button>
+                <button onClick={() => setBookingOpen(true)} data-testid="button-hero-reserve" className="inline-flex items-center gap-4 bg-[#d47d5b] px-4 py-2 text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8] transition-colors hover:bg-[#e8b092] hover:text-[#143e35]">Reserve a stay <ArrowRight size={15} /></button>
                 <a href="#destinations" className="inline-flex items-center gap-4 border border-[#f8f2e8]/40 px-7 py-4 text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8] transition-colors hover:border-[#f8f2e8]">Explore places <ChevronDown size={15} /></a>
               </div>
             </div>
