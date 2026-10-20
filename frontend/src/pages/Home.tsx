@@ -181,6 +181,7 @@ function BookingModal({ onClose, toast }: { onClose: () => void; toast: (m: stri
 
 /* ── page ────────────────────────────────────────────────────────────────── */
 export default function Home() {
+  const [announcementVisible, setAnnouncementVisible] = useState(true);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
@@ -205,6 +206,20 @@ export default function Home() {
 
   return (
     <div id="top" className="noise min-h-[100dvh] overflow-hidden bg-[#f5efe5] text-[#143e35]">
+
+      {/* ── announcement bar ── */}
+      {announcementVisible && (
+        <div className="relative z-40 flex items-center justify-center bg-[#143e35] px-10 py-2 text-[#f8f2e8]">
+          <span className="text-[11px] font-semibold uppercase tracking-[.18em]">Now running on Joylo</span>
+          <button
+            onClick={() => setAnnouncementVisible(false)}
+            aria-label="Dismiss announcement"
+            className="absolute right-4 p-1 text-[#d6cfc3] transition-colors hover:text-[#e8b092]"
+          >
+            <X size={14} strokeWidth={2} />
+          </button>
+        </div>
+      )}
 
       {/* ── header ── */}
       <header className="absolute left-0 right-0 top-0 z-30 px-5 py-5 text-[#f8f2e8] sm:px-10 sm:py-7">
