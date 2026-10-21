@@ -1,11 +1,10 @@
 import { ReactNode } from "react";
 import { HelmetProvider } from "react-helmet-async";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-
-const queryClient = new QueryClient();
+import { queryClient } from "@/lib/queryClient";
 
 // SINGLE SOURCE OF TRUTH for every app-wide provider. Both entries (main.tsx client,
 // entry-server.tsx SSR) render this exact tree, so a provider added here is automatically
