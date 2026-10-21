@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { ArrowDownRight, ArrowRight, CalendarDays, Check, ChevronDown, ChevronLeft, ChevronRight, Clock3, Globe2, Menu, Minus, Plus, X } from 'lucide-react';
+import { ArrowDownRight, ArrowRight, CalendarDays, Check, ChevronDown, ChevronLeft, ChevronRight, Clock3, Globe2, Menu, Minus, Plus, Star, X } from 'lucide-react';
 import { type ReactNode } from 'react';
 import { ErrorBoundary } from '@/components/error-boundary';
 import NotFound from '@/pages/not-found';
 import { Route, Switch, useLocation } from 'wouter';
+import { useAuth } from '@/contexts/AuthContext';
+import { AuthModal } from '@/components/AuthModal';
+import { RewardsPanel } from '@/components/RewardsPanel';
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -101,7 +104,7 @@ function ButtonArrow({ children, onClick, light = false, testId }: { children: R
   );
 }
 
-function BookingModal({ onClose, toast }: { onClose: () => void; toast: (message: string) => void }) {
+function BookingModal({ onClose, toast, onSubmit }: { onClose: () => void; toast: (message: string) => void; onSubmit?: () => void }) {
   const [destination, setDestination] = useState('Casa Nera');
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
@@ -115,6 +118,7 @@ function BookingModal({ onClose, toast }: { onClose: () => void; toast: (message
       return;
     }
     setSubmitted(true);
+    onSubmit?.();
   }
 
   return (
@@ -171,7 +175,10 @@ function BookingModal({ onClose, toast }: { onClose: () => void; toast: (message
 }
 
 function Home() {
+  const { user, logout } = useAuth();
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [rewardsOpen, setRewardsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [destinationIndex, setDestinationIndex] = useState(0);
@@ -191,6 +198,19 @@ function Home() {
   function closeMenu() { setMenuOpen(false); }
   function showToast(message: string) { setToastMessage(message); }
 
+  function handleBookingSubmit() {
+    if (user) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        fetch('/api/rewards/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ points: 250, reason: 'Booking enquiry submitted' }),
+        }).catch(() => {});
+      }
+    }
+  }
+
   return (
     <div id="top" className="noise min-h-[100dvh] overflow-hidden bg-[#f5efe5] text-[#143e35]">
       <header className="absolute left-0 right-0 top-0 z-30 px-5 py-5 text-[#f8f2e8] sm:px-10 sm:py-7">
@@ -200,11 +220,22 @@ function Home() {
             <a href="#destinations" data-testid="link-nav-destinations" className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">Places</a>
             <a href="#philosophy" data-testid="link-nav-philosophy" className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">Our way</a>
             <a href="#journal" data-testid="link-nav-journal" className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">Journal</a>
+            {user ? (
+              <div className="flex items-center gap-4">
+                <button onClick={() => setRewardsOpen(true)} className="flex items-center gap-2 eyebrow text-[#e8b092] transition-colors hover:text-[#f8f2e8]">
+                  <Star size={13} strokeWidth={1.5} />
+                  {user.rewardPoints} pts
+                </button>
+                <button onClick={() => { logout(); showToast('You have signed out.'); }} className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">Sign out</button>
+              </div>
+            ) : (
+              <button onClick={() => setAuthOpen(true)} data-testid="button-nav-signin" className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">Sign in</button>
+            )}
             <button onClick={() => setBookingOpen(true)} data-testid="button-nav-reserve" className="eyebrow border border-[#e8b092]/70 px-5 py-3 text-[#f8f2e8] transition-colors hover:bg-[#e8b092] hover:text-[#143e35]">Reserve</button>
           </nav>
           <button onClick={() => setMenuOpen((value) => !value)} aria-label="Toggle menu" data-testid="button-toggle-menu" className="p-2 md:hidden">{menuOpen ? <X size={22} /> : <Menu size={22} />}</button>
         </div>
-        {menuOpen && <nav className="absolute left-0 right-0 top-full border-t border-[#f8f2e8]/20 bg-[#143e35] px-6 py-6 md:hidden"><a onClick={closeMenu} href="#destinations" data-testid="link-mobile-destinations" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Places</a><a onClick={closeMenu} href="#philosophy" data-testid="link-mobile-philosophy" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Our way</a><a onClick={closeMenu} href="#journal" data-testid="link-mobile-journal" className="eyebrow block py-4 text-[#f8f2e8]">Journal</a><button onClick={() => { closeMenu(); setBookingOpen(true); }} data-testid="button-mobile-reserve" className="mt-3 w-full bg-[#d47d5b] py-4 text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8]">Reserve a stay</button></nav>}
+        {menuOpen && <nav className="absolute left-0 right-0 top-full border-t border-[#f8f2e8]/20 bg-[#143e35] px-6 py-6 md:hidden"><a onClick={closeMenu} href="#destinations" data-testid="link-mobile-destinations" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Places</a><a onClick={closeMenu} href="#philosophy" data-testid="link-mobile-philosophy" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Our way</a><a onClick={closeMenu} href="#journal" data-testid="link-mobile-journal" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Journal</a>{user ? (<><button onClick={() => { closeMenu(); setRewardsOpen(true); }} className="eyebrow flex items-center gap-2 border-b border-[#f8f2e8]/20 py-4 text-[#e8b092]"><Star size={12} />{user.rewardPoints} reward points</button><button onClick={() => { closeMenu(); logout(); showToast('You have signed out.'); }} className="eyebrow block py-4 text-[#f8f2e8]">Sign out</button></>) : (<button onClick={() => { closeMenu(); setAuthOpen(true); }} className="eyebrow block py-4 text-[#f8f2e8]">Sign in</button>)}<button onClick={() => { closeMenu(); setBookingOpen(true); }} data-testid="button-mobile-reserve" className="mt-3 w-full bg-[#d47d5b] py-4 text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8]">Reserve a stay</button></nav>}
       </header>
 
       <main>
@@ -303,7 +334,9 @@ function Home() {
         <div className="mx-auto max-w-[1440px]"><div className="grid gap-12 border-b border-[#f8f2e8]/20 pb-16 md:grid-cols-[1.6fr_1fr_1fr_1fr]"><div><Logo light /><p className="mt-8 max-w-xs text-sm leading-6 text-[#d6cfc3]">Private hotels for people who would rather be somewhere else.</p></div><div><span className="eyebrow text-[#e8b092]">Explore</span><div className="mt-5 grid gap-3 text-sm text-[#d6cfc3]"><a href="#destinations" data-testid="link-footer-places" className="w-fit transition-colors hover:text-[#e8b092]">Our places</a><a href="#philosophy" data-testid="link-footer-way" className="w-fit transition-colors hover:text-[#e8b092]">The Lumina way</a><a href="#journal" data-testid="link-footer-journal" className="w-fit transition-colors hover:text-[#e8b092]">Journal</a></div></div><div><span className="eyebrow text-[#e8b092]">Say hello</span><div className="mt-5 grid gap-3 text-sm text-[#d6cfc3]"><button onClick={() => showToast('A host will be with you shortly.')} data-testid="button-footer-contact" className="w-fit text-left transition-colors hover:text-[#e8b092]">Write to a host</button><button onClick={() => showToast('Call us at +39 0831 781 204.')} data-testid="button-footer-call" className="w-fit text-left transition-colors hover:text-[#e8b092]">+39 0831 781 204</button><span>hello@luminahotels.com</span></div></div><div><span className="eyebrow text-[#e8b092]">Follow along</span><div className="mt-5 grid gap-3 text-sm text-[#d6cfc3]"><button onClick={() => showToast('Instagram opens in a new window.')} data-testid="button-footer-instagram" className="w-fit text-left transition-colors hover:text-[#e8b092]">Instagram</button><button onClick={() => showToast('Our newsletter is on its way.')} data-testid="button-footer-newsletter" className="w-fit text-left transition-colors hover:text-[#e8b092]">The Lumina letter</button></div></div></div><div className="flex flex-col justify-between gap-4 pt-7 text-[10px] uppercase tracking-[.14em] text-[#a7b1a8] sm:flex-row"><span>© 2024 Lumina Hotels</span><div className="flex gap-6"><button onClick={() => showToast('Privacy, with care.')} data-testid="button-footer-privacy">Privacy</button><button onClick={() => showToast('Terms, plainly written.')} data-testid="button-footer-terms">Terms</button><span className="inline-flex items-center gap-2"><Globe2 size={12} /> EN / EUR</span></div></div></div>
       </footer>
 
-      {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} toast={showToast} />}
+      {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} toast={showToast} onSubmit={handleBookingSubmit} />}
+      {authOpen && <AuthModal onClose={() => setAuthOpen(false)} toast={showToast} />}
+      {rewardsOpen && <RewardsPanel onClose={() => setRewardsOpen(false)} />}
       {toastMessage && <div className="fade-in fixed bottom-6 left-1/2 z-[70] flex -translate-x-1/2 items-center gap-3 border border-[#d8cdbd] bg-[#f8f2e8] px-5 py-4 text-sm text-[#143e35] shadow-xl" role="status" data-testid="status-toast"><span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#d47d5b] text-[#f8f2e8]"><Check size={12} /></span>{toastMessage}</div>}
     </div>
   );
