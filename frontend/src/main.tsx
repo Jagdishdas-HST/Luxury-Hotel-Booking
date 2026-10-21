@@ -1,17 +1,24 @@
 import { createRoot } from 'react-dom/client';
+import { Router as WouterRouter } from 'wouter';
 
 import App from './App';
+import { Providers } from '@/components/Providers';
 import { ErrorBoundary } from '@/components/error-boundary';
 
 import './index.css';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 createRoot(document.getElementById('root')!, {
-  // Keeps caught errors off reportError(), which would raise the dev overlay.
   onCaughtError: (error, errorInfo) => {
     console.error(error, errorInfo.componentStack);
   },
 }).render(
   <ErrorBoundary>
-    <App />
+    <Providers>
+      <WouterRouter base={base}>
+        <App />
+      </WouterRouter>
+    </Providers>
   </ErrorBoundary>,
 );
