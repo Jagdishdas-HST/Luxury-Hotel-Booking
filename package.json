@@ -116,7 +116,8 @@
     "vite-plugin-joylo-editor": "^1.0.9"
   },
   "workspaces": [
-    "scripts"
+    "scripts",
+    "lib/*"
   ],
   "overrides": {
     "@esbuild-kit/esm-loader": "npm:tsx@^4.21.0",
