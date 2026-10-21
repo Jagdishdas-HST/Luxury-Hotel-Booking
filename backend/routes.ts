@@ -23,7 +23,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: err.errors[0].message });
       }
       console.error("Register error:", err);
-      res.status(500).json({ message: "Registration failed." });
+      const message = err instanceof Error ? err.message : "Registration failed.";
+      res.status(500).json({ message });
     }
   });
 

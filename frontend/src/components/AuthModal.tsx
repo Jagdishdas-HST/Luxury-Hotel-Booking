@@ -30,7 +30,13 @@ export function AuthModal({ onClose, toast }: AuthModalProps) {
       }
       onClose();
     } catch (err: any) {
-      setError(err.message || "Something went wrong.");
+      // Try to parse JSON error body if present
+      let msg = err.message || "Something went wrong.";
+      try {
+        const parsed = JSON.parse(msg);
+        if (parsed?.message) msg = parsed.message;
+      } catch {}
+      setError(msg);
     } finally {
       setLoading(false);
     }
