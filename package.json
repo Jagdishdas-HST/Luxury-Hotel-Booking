@@ -116,9 +116,6 @@
     "vite-plugin-joylo-editor": "^1.0.9"
   },
   "workspaces": [
-    "artifacts/*",
-    "lib/*",
-    "lib/integrations/*",
     "scripts"
   ],
   "overrides": {
