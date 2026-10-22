@@ -3,7 +3,8 @@ import { ArrowDownRight, ArrowRight, CalendarDays, Check, ChevronDown, ChevronLe
 import { type ReactNode } from 'react';
 import { ErrorBoundary } from '@/components/error-boundary';
 import NotFound from '@/pages/not-found';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Link } from 'react-router-dom';
+import ReservationsPage from '@/pages/reservations';
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -200,11 +201,12 @@ function Home() {
             <a href="#destinations" data-testid="link-nav-destinations" className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">Places</a>
             <a href="#philosophy" data-testid="link-nav-philosophy" className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">Our way</a>
             <a href="#journal" data-testid="link-nav-journal" className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">Journal</a>
+            <Link to="/reservations" data-testid="link-nav-reservations" className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">Reservations</Link>
             <button onClick={() => setBookingOpen(true)} data-testid="button-nav-reserve" className="eyebrow border border-[#e8b092]/70 px-5 py-3 text-[#f8f2e8] transition-colors hover:bg-[#e8b092] hover:text-[#143e35]">Reserve</button>
           </nav>
           <button onClick={() => setMenuOpen((value) => !value)} aria-label="Toggle menu" data-testid="button-toggle-menu" className="p-2 md:hidden">{menuOpen ? <X size={22} /> : <Menu size={22} />}</button>
         </div>
-        {menuOpen && <nav className="absolute left-0 right-0 top-full border-t border-[#f8f2e8]/20 bg-[#143e35] px-6 py-6 md:hidden"><a onClick={closeMenu} href="#destinations" data-testid="link-mobile-destinations" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Places</a><a onClick={closeMenu} href="#philosophy" data-testid="link-mobile-philosophy" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Our way</a><a onClick={closeMenu} href="#journal" data-testid="link-mobile-journal" className="eyebrow block py-4 text-[#f8f2e8]">Journal</a><button onClick={() => { closeMenu(); setBookingOpen(true); }} data-testid="button-mobile-reserve" className="mt-3 w-full bg-[#d47d5b] py-4 text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8]">Reserve a stay</button></nav>}
+        {menuOpen && <nav className="absolute left-0 right-0 top-full border-t border-[#f8f2e8]/20 bg-[#143e35] px-6 py-6 md:hidden"><a onClick={closeMenu} href="#destinations" data-testid="link-mobile-destinations" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Places</a><a onClick={closeMenu} href="#philosophy" data-testid="link-mobile-philosophy" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Our way</a><a onClick={closeMenu} href="#journal" data-testid="link-mobile-journal" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Journal</a><Link onClick={closeMenu} to="/reservations" data-testid="link-mobile-reservations" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Reservations</Link><button onClick={() => { closeMenu(); setBookingOpen(true); }} data-testid="button-mobile-reserve" className="mt-3 w-full bg-[#d47d5b] py-4 text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8]">Reserve a stay</button></nav>}
       </header>
 
       <main>
@@ -323,6 +325,7 @@ function App() {
     <RoutedErrorBoundary>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/reservations" element={<ReservationsPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </RoutedErrorBoundary>
