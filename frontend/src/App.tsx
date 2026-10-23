@@ -1,14 +1,9 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { ArrowDownRight, ArrowRight, CalendarDays, Check, ChevronDown, ChevronLeft, ChevronRight, Clock3, Globe2, Menu, Minus, Plus, X } from 'lucide-react';
 import { type ReactNode } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
-import { Toaster } from '@/components/ui/toaster';
-import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
-import { Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
-
-const queryClient = new QueryClient();
+import { Route, Switch, useLocation } from 'wouter';
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -292,7 +287,7 @@ function Home() {
           <div ref={notesRef} className="reveal mx-auto max-w-[1200px]">
             <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end"><div><SectionLabel number="05">The house notes</SectionLabel><h2 className="serif mt-7 text-6xl leading-[.88] sm:text-8xl">From our<br /><em>notebook.</em></h2></div><ButtonArrow onClick={() => showToast('The next note is still being written.')} testId="button-read-journal">Read all notes</ButtonArrow></div>
             <div className="mt-14 grid gap-8 md:grid-cols-[1.2fr_.8fr]">
-              <article className="group cursor-pointer" onClick={() => showToast('Opening: A field guide to doing less.') } data-testid="card-journal-featured"><div className="aspect-[16/9] overflow-hidden"><Image src="https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1600&q=85" alt="Wild deer in a quiet field" className="transition-transform duration-700 group-hover:scale-105" /></div><div className="mt-5 flex justify-between gap-4"><div><span className="eyebrow text-[#d47d5b]">Field notes · 06 min</span><h3 className="serif mt-3 text-4xl leading-none sm:text-5xl">A field guide to doing less.</h3></div><ArrowUpRightIcon /></div></article>
+              <article className="group cursor-pointer" onClick={() => showToast('Opening: A field guide to doing less.')} data-testid="card-journal-featured"><div className="aspect-[16/9] overflow-hidden"><Image src="https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1600&q=85" alt="Wild deer in a quiet field" className="transition-transform duration-700 group-hover:scale-105" /></div><div className="mt-5 flex justify-between gap-4"><div><span className="eyebrow text-[#d47d5b]">Field notes · 06 min</span><h3 className="serif mt-3 text-4xl leading-none sm:text-5xl">A field guide to doing less.</h3></div><ArrowUpRightIcon /></div></article>
               <div className="grid gap-8 md:pt-24"><article className="group cursor-pointer border-t border-[#c9ad9d] pt-5" onClick={() => showToast('Opening: The road beyond Ostuni.')} data-testid="card-journal-secondary"><div className="flex gap-5"><div className="h-24 w-24 shrink-0 overflow-hidden"><Image src="https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?auto=format&fit=crop&w=500&q=80" alt="Puglian coast" className="transition-transform duration-500 group-hover:scale-110" /></div><div><span className="eyebrow text-[#d47d5b]">Puglia · 04 min</span><h3 className="serif mt-2 text-3xl leading-none">The road beyond Ostuni.</h3></div></div></article><article className="group cursor-pointer border-t border-[#c9ad9d] pt-5" onClick={() => showToast('Opening: Notes on an early train.')} data-testid="card-journal-tertiary"><div className="flex gap-5"><div className="h-24 w-24 shrink-0 overflow-hidden"><Image src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=500&q=80" alt="Quiet train in Japan" className="transition-transform duration-500 group-hover:scale-110" /></div><div><span className="eyebrow text-[#d47d5b]">Kyoto · 03 min</span><h3 className="serif mt-2 text-3xl leading-none">Notes on an early train.</h3></div></div></article></div>
             </div>
           </div>
@@ -318,17 +313,6 @@ function ArrowUpRightIcon() {
   return <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#143e35]/40 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"><ArrowDownRight size={15} className="-rotate-90" /></span>;
 }
 
-function Router() {
-  return (
-    <RoutedErrorBoundary>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route component={NotFound} />
-      </Switch>
-    </RoutedErrorBoundary>
-  );
-}
-
 function RoutedErrorBoundary({ children }: { children: ReactNode }) {
   const [location] = useLocation();
   return <ErrorBoundary resetKey={location}>{children}</ErrorBoundary>;
@@ -336,14 +320,12 @@ function RoutedErrorBoundary({ children }: { children: ReactNode }) {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-          <Router />
-        </WouterRouter>
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <RoutedErrorBoundary>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route component={NotFound} />
+      </Switch>
+    </RoutedErrorBoundary>
   );
 }
 
