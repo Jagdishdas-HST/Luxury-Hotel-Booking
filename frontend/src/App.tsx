@@ -6,6 +6,8 @@ import { memoryLocation } from 'wouter/memory-location';
 import { ClientOnly } from '@/components/ClientOnly';
 import HomeContent from '@/pages/Home';
 import AboutContent from '@/pages/About';
+import LoginPage from '@/pages/Login';
+import AuthCallback from '@/pages/AuthCallback';
 
 function Router() {
   return (
@@ -13,6 +15,10 @@ function Router() {
       <Switch>
         <Route path="/" component={HomePage} />
         <Route path="/about" component={AboutPage} />
+        <Route path="/login" component={LoginPage} />
+        <Route path="/auth/callback/:provider">
+          {(params) => <AuthCallback provider={params.provider} />}
+        </Route>
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>
