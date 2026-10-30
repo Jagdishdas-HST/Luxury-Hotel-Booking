@@ -12,5 +12,18 @@
     {
       "path": "./lib/api-zod"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@shared/*": [
+        "./shared/*"
+      ],
+      "@backend/*": [
+        "./backend/*"
+      ],
+      "@/*": [
+        "./frontend/src/*"
+      ]
+    }
+  }
 }
