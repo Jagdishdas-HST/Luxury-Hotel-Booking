@@ -16,7 +16,11 @@ function AuthCallbackInner({ provider }: { provider: string }) {
     }
     const redirectUri = `${window.location.origin}/auth/callback/${provider}`;
     loginWithSSO(provider, code, redirectUri)
-      .then(() => navigate("/"))
+      .then(() => {
+        const back = window.localStorage.getItem("lumina_return_to") || "/";
+        window.localStorage.removeItem("lumina_return_to");
+        navigate(back);
+      })
       .catch(() => navigate("/login?error=sso_failed"));
   }, []);
 

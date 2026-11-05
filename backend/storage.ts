@@ -1,6 +1,15 @@
 import { db } from "./db";
-import { users, type User, type InsertUser } from "@shared/schema";
-import { eq, or } from "drizzle-orm";
+import { users, reservations, type User, type InsertUser, type Reservation, type CreateReservationInput } from "@shared/schema";
+import { eq, desc, and } from "drizzle-orm";
+
+export async function createReservation(userId: number, data: CreateReservationInput): Promise<Reservation> {
+  const [row] = await db.insert(reservations).values({ userId, ...data }).returning();
+  return row;
+}
+
+export async function listReservationsForUser(userId: number): Promise<Reservation[]> {
+  return db.select().from(reservations).where(eq(reservations.userId, userId)).orderBy(desc(reservations.createdAt));
+}
 
 export async function getUserById(id: number): Promise<User | undefined> {
   const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -16,7 +25,7 @@ export async function getUserByProvider(provider: string, providerId: string): P
   const [user] = await db
     .select()
     .from(users)
-    .where(eq(users.providerId, providerId));
+    .where(and(eq(users.providerId, providerId), eq(users.provider, provider)));
   return user;
 }
 

@@ -18,7 +18,11 @@ function LoginInner() {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user) navigate("/");
+    if (user) {
+      const back = window.localStorage.getItem("lumina_return_to") || "/";
+      window.localStorage.removeItem("lumina_return_to");
+      navigate(back);
+    }
   }, [user, navigate]);
 
   // Handle SSO callback code in URL (when this page is the callback target)

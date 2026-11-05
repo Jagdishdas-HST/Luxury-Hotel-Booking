@@ -1,12 +1,12 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { generateToken, comparePassword, hashPassword, requireAuth, type AuthRequest } from "./auth";
-import { getUserByEmail, getUserById, createUser, upsertProviderUser } from "./storage";
-import { loginSchema, registerSchema } from "@shared/schema";
+import { getUserByEmail, getUserById, createUser, upsertProviderUser, createReservation, listReservationsForUser } from "./storage";
+import { loginSchema, registerSchema, createReservationSchema } from "@shared/schema";
 
 const SSO_BASE = "https://auth.joylo.cloud";
 const CLIENT_ID = process.env.VITE_JOYLO_CLOUD_SSO_CLIENT_ID || "";
-const CLIENT_SECRET = process.env.VITE_JOYLO_CLOUD_SSO_CLIENT_SECRET || "";
+const CLIENT_SECRET = process.env.JOYLO_CLOUD_SSO_CLIENT_SECRET || "";
 
 export async function registerRoutes(app: Express): Promise<Server> {
 
@@ -121,6 +121,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (err) {
       console.error("[sso callback]", err);
       return res.status(500).json({ message: "SSO authentication failed." });
+    }
+  });
+
+  // --- Reservations (sign-in required) ---
+  app.post("/api/reservations", requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const parsed = createReservationSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ message: parsed.error.errors[0].message });
+      }
+      const reservation = await createReservation(req.userId!, parsed.data);
+      return res.status(201).json(reservation);
+    } catch (err) {
+      console.error("[create reservation]", err);
+      return res.status(500).json({ message: "Could not save your reservation." });
+    }
+  });
+
+  app.get("/api/reservations", requireAuth, async (req: AuthRequest, res) => {
+    try {
+      return res.json(await listReservationsForUser(req.userId!));
+    } catch (err) {
+      console.error("[list reservations]", err);
+      return res.status(500).json({ message: "Failed to load reservations." });
     }
   });
 

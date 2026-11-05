@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import SiteFooter from '@/components/SiteFooter';
 import { type ReactNode } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 /* ── image URLs ─────────────────────────────────────────────────────────── */
 const IMG = {
@@ -110,10 +111,28 @@ function BookingModal({ onClose, toast }: { onClose: () => void; toast: (m: stri
   const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState(2);
   const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const { user, token } = useAuth();
 
-  function submit(e: FormEvent<HTMLFormElement>) {
+  function goToLogin() {
+    window.localStorage.setItem('lumina_return_to', '/');
+    window.location.href = '/login';
+  }
+
+  async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setError('');
     if (!checkIn || !checkOut) { toast('Choose your dates and we will hold the quiet for you.'); return; }
+    setSaving(true);
+    const res = await fetch('/api/reservations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ destination, checkIn, checkOut, guests }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setSaving(false);
+    if (!res.ok) { setError(data.message || 'Could not save your reservation.'); return; }
     setSubmitted(true);
   }
 
@@ -123,7 +142,18 @@ function BookingModal({ onClose, toast }: { onClose: () => void; toast: (m: stri
         <button onClick={onClose} aria-label="Close booking form" data-testid="button-close-booking" className="absolute right-5 top-5 p-2 text-[#527069] transition-colors hover:text-[#d47d5b]">
           <X size={18} strokeWidth={1.5} />
         </button>
-        {!submitted ? (
+        {!user ? (
+          <div className="flex min-h-[340px] flex-col justify-between">
+            <div>
+              <SectionLabel number="01">A private invitation</SectionLabel>
+              <h2 className="serif mt-5 max-w-lg text-5xl leading-[.95] sm:text-6xl">Sign in to <em>reserve.</em></h2>
+              <p className="mt-4 max-w-md text-sm leading-6 text-[#527069]">Reservations are held for our guests. Sign in or create an account and we will bring you straight back.</p>
+            </div>
+            <button onClick={goToLogin} data-testid="button-booking-signin" className="mt-10 flex w-full items-center justify-between bg-[#143e35] px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8] transition-colors hover:bg-[#d47d5b]">
+              <span>Sign in to continue</span><ArrowRight size={16} strokeWidth={1.5} />
+            </button>
+          </div>
+        ) : !submitted ? (
           <>
             <SectionLabel number="01">A private invitation</SectionLabel>
             <h2 className="serif mt-5 max-w-lg text-5xl leading-[.95] sm:text-6xl">Where will you <em>disappear</em> to?</h2>
@@ -159,8 +189,9 @@ function BookingModal({ onClose, toast }: { onClose: () => void; toast: (m: stri
                   <button type="button" onClick={() => setGuests((v) => Math.min(8, v + 1))} data-testid="button-increase-guests" className="flex h-7 w-7 items-center justify-center border border-[#b9b8a9]"><Plus size={13} /></button>
                 </div>
               </div>
-              <button type="submit" data-testid="button-submit-booking" className="mt-2 flex w-full items-center justify-between bg-[#143e35] px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8] transition-colors hover:bg-[#d47d5b]">
-                <span>Begin the conversation</span><ArrowRight size={16} strokeWidth={1.5} />
+              {error && <p className="border border-[#f5c6c0] bg-[#fdf0ee] px-4 py-3 text-sm text-[#c0392b]">{error}</p>}
+              <button type="submit" disabled={saving} data-testid="button-submit-booking" className="mt-2 flex w-full items-center justify-between bg-[#143e35] px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8] transition-colors hover:bg-[#d47d5b] disabled:opacity-60">
+                <span>{saving ? 'Sending…' : 'Begin the conversation'}</span><ArrowRight size={16} strokeWidth={1.5} />
               </button>
             </form>
           </>
@@ -187,6 +218,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
   const [destIdx, setDestIdx] = useState(0);
+  const { user, logout } = useAuth();
 
   const introRef = useReveal();
   const destinationsRef = useReveal();
@@ -230,6 +262,11 @@ export default function Home() {
             <a href="#destinations" data-testid="link-nav-destinations" className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">Places</a>
             <a href="#philosophy" data-testid="link-nav-philosophy" className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">Our way</a>
             <a href="#journal" data-testid="link-nav-journal" className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">Journal</a>
+            {user ? (
+              <button onClick={logout} data-testid="button-nav-signout" className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">{user.name || user.email} · Sign out</button>
+            ) : (
+              <a href="/login" data-testid="link-nav-signin" className="eyebrow text-[#eee4d7] transition-colors hover:text-[#e8b092]">Sign in</a>
+            )}
             <button onClick={() => setBookingOpen(true)} data-testid="button-nav-reserve" className="eyebrow border border-[#e8b092]/70 px-5 py-3 text-[#f8f2e8] transition-colors hover:bg-[#e8b092] hover:text-[#143e35]">Reserve</button>
           </nav>
           <button onClick={() => setMenuOpen((v) => !v)} aria-label="Toggle menu" data-testid="button-toggle-menu" className="p-2 md:hidden">
@@ -240,7 +277,12 @@ export default function Home() {
           <nav className="absolute left-0 right-0 top-full border-t border-[#f8f2e8]/20 bg-[#143e35] px-6 py-6 md:hidden">
             <a onClick={closeMenu} href="#destinations" data-testid="link-mobile-destinations" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Places</a>
             <a onClick={closeMenu} href="#philosophy" data-testid="link-mobile-philosophy" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Our way</a>
-            <a onClick={closeMenu} href="#journal" data-testid="link-mobile-journal" className="eyebrow block py-4 text-[#f8f2e8]">Journal</a>
+            <a onClick={closeMenu} href="#journal" data-testid="link-mobile-journal" className="eyebrow block border-b border-[#f8f2e8]/20 py-4 text-[#f8f2e8]">Journal</a>
+            {user ? (
+              <button onClick={() => { closeMenu(); logout(); }} data-testid="button-mobile-signout" className="eyebrow block py-4 text-[#f8f2e8]">Sign out</button>
+            ) : (
+              <a href="/login" data-testid="link-mobile-signin" className="eyebrow block py-4 text-[#f8f2e8]">Sign in</a>
+            )}
             <button onClick={() => { closeMenu(); setBookingOpen(true); }} data-testid="button-mobile-reserve" className="mt-3 w-full bg-[#d47d5b] py-4 text-[11px] font-semibold uppercase tracking-[.16em] text-[#f8f2e8]">Reserve a stay</button>
           </nav>
         )}
