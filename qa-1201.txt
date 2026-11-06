@@ -1,0 +1,5 @@
+line one from shell
+line two from shell
+unsaved edit in editorline three from shell
+line four from shell
+MINE

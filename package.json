@@ -107,7 +107,8 @@
     "vite-plugin-joylo-editor": "^1.0.9"
   },
   "scripts": {
-    "dev": "tsx backend/server.ts"
+    "dev": "tsx backend/server.ts",
+    "build": "vite build 2>&1 && node esbuild.config.mjs 2>&1"
   },
   "type": "module"
 }
